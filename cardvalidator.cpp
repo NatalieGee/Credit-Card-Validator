@@ -1,66 +1,67 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+using std:: string;
 
-using namespace std;
+class cardvalidator{
+    public:
+        int cardNum;
+        int doubleEvenSum;
+        int sumA = 0;
+        int sumB = 0;
+        int endNumber = 0
 
-bool isNumberString(const string& s) {
-    int len = s.length();
-    for (int i = 0; i < len; i++) {
-        if (s[i] < '0' || s[i] > '9')
-            return false;
+cardvalidator(int cardNum, int doubleEvenSum, int sumA, int sumB, int endNumber){
+        cardNum = cardNum;
+        doubleEvenSum = doubleEvenSum;
+        sumA = sumA;
+        sumB = sumB;
+        endNumber = endNumber;
+    };
+
+int sumDoubles(int cardNum, int sumA){
+        //take away the last digit of the card number becuase it is not needed for calculation
+        //card nuber is now just the fits 15 digits now
+        cardNum = cardNum/10;
+
+    for (int i = 0; i < 8; i ++){
+        //isolate the NEW last digit of the cardNumber
+        endNumber = cardNum%10;
+        //if the NEW last digit doubled is a two digit number 
+        //add those two digits together
+        if ((endNumber*2) > 9){
+            endNumber = (endNumber / 10) + (endNumber % 10);
+        }else{
+            endNumber = endNumber*2;}
+        //add the value of endNumber to sumA
+        sumA = sumA + endNumber;
+        //now get rid of two numbers becuase we are done with them
+        //repeat the process of taking every second last number and adding that to the sum.
+        cardNum = cardNum/10;
+        cardNum = cardNum/10;
     }
-    return true;
+    return sumA;
 }
 
-int main() {
-    string ccNumber;
-    
-    cout << "This program uses the Luhn Algorigthm to validate a CC number." << endl;
-    cout << "You can enter 'exit' anytime to quit." << endl;
-    
-    while (true) {
-        
-        cout << "Please enter a CC number to validate: ";
-        cin >> ccNumber;
-        
-        if (ccNumber == "exit")
-            break;
-        
-        else if (!isNumberString(ccNumber)) {
-            cout << "Bad input! ";
-            continue;
-        }
-            
-        int len = ccNumber.length();
-        int doubleEvenSum = 0;
-        
-        // Step 1 is to double every second digit, starting from the right. If it
-        // results in a two digit number, add both the digits to obtain a single
-        // digit number. Finally, sum all the answers to obtain 'doubleEvenSum'.   
-        
-        for (int i = len - 2; i >= 0; i = i - 2) {
-            int dbl = ((ccNumber[i] - 48) * 2);
-            if (dbl > 9) {
-                dbl = (dbl / 10) + (dbl % 10);
-            }
-            doubleEvenSum += dbl;
-        }
-        
-        // Step 2 is to add every odd placed digit from the right to the value
-        // 'doubleEvenSum'.
-        
-        for (int i = len - 1; i >= 0; i = i - 2) {
-            doubleEvenSum += (ccNumber[i] - 48);
-        }
-        
-        // Step 3 is to check if the final 'doubleEvenSum' is a multiple of 10.
-        // If yes, it is a valid CC number. Otherwise, not.
-        
-        cout << (doubleEvenSum % 10 == 0 ? "Valid!" : "Invalid!") << endl;
-        
-        continue;        
+int sumOddNumbers(int cardNum, int sumB){
+    for (int i = 0; i < 8; i ++){
+    int lastNumber = cardNum%10;
+    sumB = sumB + cardNum;
+    cardNum = cardNum/100;
     }
+    return sumB
+}
 
+int main(int cardNum) 
+{
+    //get input 
+    std::cout << "Enter number to validate: ";
+    std::cin >> cardNum;
+
+    // 
+    std::thread thread1(sumDoubles, cardNum, doubleEvenSum);
+    std::thread thread2(sumOddNumbers, cardNum, doubleEvenSum); 
     return 0;
 }
+
+};
